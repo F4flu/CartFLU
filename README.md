@@ -94,7 +94,7 @@ Un exemple de fichier est fourni dans le dépôt (`callsign_list.example.txt`).
 ```
 CartoFLU/
 ├── CartoFLU.html              # Application principale (fichier unique)
-├── callsign_list.example.txt  # Exemple de liste d'indicatifs
+├── callsign_list-example.txt  # Exemple de liste d'indicatifs
 ├── tile_server.py             # Serveur de tuiles hors-ligne
 ├── tile_server.bat            # Lanceur Windows pour le serveur
 └── README.md
