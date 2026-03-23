@@ -111,13 +111,6 @@ CartoFLU/
 
 Les contributions sont les bienvenues, que vous soyez radioamateur, développeur ou membre d'une ADRASEC !
 
-### Comment contribuer
-
-1. **Forker** le dépôt
-2. Créer une branche : `git checkout -b feature/ma-fonctionnalite`
-3. Committer vos modifications : `git commit -m "Ajout de ma fonctionnalité"`
-4. Pousser la branche : `git push origin feature/ma-fonctionnalite`
-5. Ouvrir une **Pull Request**
 
 ### Signaler un bug ou proposer une idée
 
