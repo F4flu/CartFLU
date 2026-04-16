@@ -127,8 +127,33 @@
   <div class="leg-item"><div class="leg-line" style="background:#00d4ff;opacity:0.3;height:8px;"></div><span>Secteur incertitude</span></div>
   <div class="leg-item"><div class="leg-dot" style="background:#00d4ff"></div><span>Station réceptrice</span></div>
   <div class="leg-item"><div class="leg-dot" style="background:#ff2d55"></div><span>Intersection estimée</span></div>
-  <div class="leg-item"><div class="leg-dot" style="background:#ff2d55;border-radius:0"></div><span>Position balise (fox)</span></div>
-  <div class="leg-item"><span style="font-size:14px">🚫</span><span>Écoute négative</span></div>
+  <div class="leg-item">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 100 100" style="flex-shrink:0">
+      <circle cx="50" cy="50" r="48" fill="rgba(20,0,0,0.82)" stroke="#ff2d55" stroke-width="4"/>
+      <g stroke="#ff2d55" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M62 22 C75 22 82 33 82 46 C82 58 76 65 68 72 C64 76 62 80 62 84 C62 86 60 88 57 88 C53 88 51 85 51 82"/>
+        <path d="M51 62 C54 58 60 54 60 46 C60 38 54 32 47 32 C40 32 35 38 35 46 C35 52 39 57 44 60"/>
+        <circle cx="47" cy="72" r="3.5" fill="#ff2d55" stroke="none"/>
+        <path d="M35 46 C35 68 42 80 51 82"/>
+      </g>
+      <line x1="18" y1="18" x2="82" y2="82" stroke="#ff2d55" stroke-width="7" stroke-linecap="round"/>
+    </svg>
+    <span>Écoute négative</span>
+  </div>
+  <div class="leg-item">
+    <svg width="24" height="14" viewBox="0 0 24 14" style="flex-shrink:0">
+      <rect x="1" y="3" width="22" height="8" rx="2" fill="rgba(0,212,255,0.15)" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="4 2"/>
+      <line x1="1" y1="7" x2="23" y2="7" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="4 2"/>
+    </svg>
+    <span>Plan de vol</span>
+  </div>
+  <div class="leg-item">
+    <svg width="24" height="14" viewBox="0 0 24 14" style="flex-shrink:0">
+      <polygon points="12,1 23,13 1,13" fill="rgba(255,107,53,0.15)" stroke="#ff6b35" stroke-width="1.5"/>
+    </svg>
+    <span>Zone de recherche</span>
+  </div>
+</div>
 </div>
 
 <div id="coordBar"><span class="waiting">Déplacez la souris sur la carte…</span></div>
