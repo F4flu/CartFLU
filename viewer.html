@@ -153,6 +153,17 @@
     </svg>
     <span>Zone de recherche</span>
   </div>
+  <div class="leg-item">
+    <svg width="24" height="14" viewBox="0 0 24 14" style="flex-shrink:0">
+      <defs>
+        <pattern id="vHatch" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)">
+          <line x1="0" y1="0" x2="0" y2="4" stroke="#ff2d55" stroke-width="1.2" stroke-opacity="0.7"/>
+        </pattern>
+      </defs>
+      <circle cx="12" cy="7" r="6" fill="url(#vHatch)" stroke="#ff2d55" stroke-width="1.5" stroke-dasharray="3 2"/>
+    </svg>
+    <span>Zone SATER C</span>
+  </div>
 </div>
 </div>
 
@@ -195,6 +206,8 @@ let volLayers = [];
 let zoneLayers = [];
 let sendMarkerLayers = [];
 let negMarkers = [];
+let saterViewLayers = [];
+let saterViewTimer = null;
 
 function clearAll() {
   Object.values(layers).forEach(l => { if(Array.isArray(l)) l.forEach(x=>map.removeLayer(x)); else map.removeLayer(l); });
@@ -205,6 +218,8 @@ function clearAll() {
   zoneLayers.forEach(l => map.removeLayer(l)); zoneLayers = [];
   sendMarkerLayers.forEach(l => map.removeLayer(l)); sendMarkerLayers = [];
   negMarkers.forEach(l => map.removeLayer(l)); negMarkers = [];
+  saterViewLayers.forEach(l => map.removeLayer(l)); saterViewLayers = [];
+  if (saterViewTimer) { cancelAnimationFrame(saterViewTimer); saterViewTimer = null; }
 }
 
 function applySession(d) {
@@ -369,6 +384,56 @@ function applySession(d) {
     });
   }
 
+  // Zone SATER C
+  if (d.sater) {
+    const SATER_RED = '#ff2d55';
+    if (d.sater.mode === 'circle' && d.sater.center) {
+      const center = L.latLng(d.sater.center.lat, d.sater.center.lng);
+      const radiusKm = d.sater.radius || 5;
+      const dot = L.circleMarker(center, {
+        radius: 6, color: SATER_RED, fillColor: SATER_RED, fillOpacity: 1, weight: 2
+      }).addTo(map).bindPopup('<b>SATER C</b><br>Centre<br>Rayon : ' + radiusKm + ' km');
+      saterViewLayers.push(dot);
+      const circle = L.circle(center, {
+        radius: radiusKm * 1000,
+        color: SATER_RED, fillColor: SATER_RED, fillOpacity: 0.12,
+        weight: 2, opacity: 0.9, dashArray: '8 4'
+      }).addTo(map);
+      saterViewLayers.push(circle);
+      // Animation pulse
+      const start = performance.now();
+      function pulseSater(now) {
+        const t = ((now - start) % 2000) / 2000;
+        const op = 0.05 + 0.50 * (0.5 - 0.5 * Math.cos(2 * Math.PI * t));
+        try { circle.setStyle({ fillOpacity: op }); } catch(e) {}
+        saterViewTimer = requestAnimationFrame(pulseSater);
+      }
+      saterViewTimer = requestAnimationFrame(pulseSater);
+    } else if (d.sater.mode === 'poly' && d.sater.points && d.sater.points.length >= 3) {
+      const pts = d.sater.points.map(p => L.latLng(p.lat, p.lng));
+      const poly = L.polygon(pts, {
+        color: SATER_RED, fillColor: SATER_RED, fillOpacity: 0.12,
+        weight: 2, opacity: 0.9, dashArray: '8 4'
+      }).addTo(map);
+      saterViewLayers.push(poly);
+      pts.forEach(pt => {
+        const dot = L.circleMarker(pt, {
+          radius: 3, color: SATER_RED, fillColor: SATER_RED, fillOpacity: 1, weight: 1.5
+        }).addTo(map);
+        saterViewLayers.push(dot);
+      });
+      // Animation pulse
+      const start = performance.now();
+      function pulseSaterPoly(now) {
+        const t = ((now - start) % 2000) / 2000;
+        const op = 0.05 + 0.50 * (0.5 - 0.5 * Math.cos(2 * Math.PI * t));
+        try { poly.setStyle({ fillOpacity: op }); } catch(e) {}
+        saterViewTimer = requestAnimationFrame(pulseSaterPoly);
+      }
+      saterViewTimer = requestAnimationFrame(pulseSaterPoly);
+    }
+  }
+
   // Mise à jour statut
   const now = new Date();
   document.getElementById('lastUpdate').textContent = 'Mis à jour : ' + now.toLocaleTimeString();
@@ -421,7 +486,18 @@ function connect() {
   if (!remoteId) return;
 
   if (!peer) {
-    peer = new Peer({ debug: 0 });
+    peer = new Peer({
+      debug: 0,
+      config: {
+        iceServers: [
+          { urls: 'stun:stun.l.google.com:19302' },
+          { urls: 'stun:stun1.l.google.com:19302' },
+          { urls: 'turn:openrelay.metered.ca:80',   username: 'openrelayproject', credential: 'openrelayproject' },
+          { urls: 'turn:openrelay.metered.ca:443',  username: 'openrelayproject', credential: 'openrelayproject' },
+          { urls: 'turn:openrelay.metered.ca:443?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' }
+        ]
+      }
+    });
     peer.on('error', err => setStatus('Erreur : ' + err.type, 'warn'));
   }
 
